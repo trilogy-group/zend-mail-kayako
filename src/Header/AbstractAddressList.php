@@ -145,24 +145,21 @@ abstract class AbstractAddressList implements HeaderInterface
                     $name = HeaderWrap::mimeEncodeValue($name, $encoding);
                 }
 
-                if (preg_match('/^(.+)@([^@]+)$/', $email, $matches)) {
-                    $localPart = $matches[1];
-                    $hostname  = $this->idnToAscii($matches[2]);
-                    $email = sprintf('%s@%s', $localPart, $hostname);
-                }
+	            if (preg_match('/^(.*)\<(.+)@([^@]+)\>(.*)$/', $value, $matches)) {
+		            $localPart = $matches[2];
+		            $hostname  = $this->idnToAscii($matches[3]);
+		            $email = sprintf('%s@%s', $localPart, $hostname);
+	            } elseif (preg_match('/^(.+)@([^@]+)$/', $value, $matches)) {
+		            $localPart = $matches[1];
+		            $hostname  = $this->idnToAscii($matches[2]);
+		            $email = sprintf('%s@%s', $localPart, $hostname);
+	            }
             }
 
             if (empty($name)) {
                 $emails[] = $email;
             } else {
                 $emails[] = sprintf('%s <%s>', $name, $email);
-            }
-        }
-
-        // Ensure the values are valid before sending them.
-        if ($format !== HeaderInterface::FORMAT_RAW) {
-            foreach ($emails as $email) {
-                HeaderValue::assertValid($email);
             }
         }
 

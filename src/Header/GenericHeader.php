@@ -127,7 +127,7 @@ class GenericHeader implements HeaderInterface, UnstructuredInterface
     {
         $fieldValue = (string) $fieldValue;
 
-        if (! HeaderWrap::canBeEncoded($fieldValue)) {
+        if ($this->getFieldName() !== 'Thread-Topic' && ! HeaderWrap::canBeEncoded($fieldValue)) {
             throw new Exception\InvalidArgumentException(
                 'Header value must be composed of printable US-ASCII characters and valid folding sequences.'
             );
