@@ -8,6 +8,7 @@
 namespace Zend\Mail\Protocol;
 
 use Zend\Stdlib\ErrorHandler;
+use function fwrite;
 
 class Pop3
 {
