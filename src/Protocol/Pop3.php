@@ -8,6 +8,7 @@
 namespace Zend\Mail\Protocol;
 
 use Zend\Stdlib\ErrorHandler;
+use function fwrite;
 
 class Pop3
 {
@@ -136,6 +137,29 @@ class Pop3
         if (! $result) {
             throw new Exception\RuntimeException('send failed - connection closed?', 0, $error);
         }
+    }
+
+    /**
+     * Send requests
+     *
+     * @param string $requests your request in array
+     * @throws Exception\RuntimeException
+     */
+    public function sendRequests($requests = [])
+    {
+        ErrorHandler::start();
+        $result = '';
+        foreach ($requests as $request) {
+            if (fwrite($this->socket, $request . "\r\n") === false) {
+                throw new Exception\RuntimeException('cannot write - connection closed?');
+            }
+            $result = $result.fgets($this->socket)."\r\n";
+        }
+        $error  = ErrorHandler::stop();
+        if (! $result) {
+            throw new Exception\RuntimeException('send failed - connection closed?', 0, $error);
+        }
+        return $result;
     }
 
     /**
