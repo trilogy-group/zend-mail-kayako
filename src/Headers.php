@@ -71,21 +71,24 @@ class Headers implements Countable, Iterator
         // iterate the header lines, some might be continuations
         $lines = explode($EOL, $string);
         $total = count($lines);
+
         for ($i = 0; $i < $total; $i += 1) {
             $line = $lines[$i];
+            $isEmptyLine = preg_match('/^\s*$/', $line);
 
             // Empty line indicates end of headers
-            // EXCEPT if there are more lines, in which case, there's a possible error condition
-            if (preg_match('/^\s*$/', $line)) {
+            if ($isEmptyLine) {
                 $emptyLine += 1;
-                if ($emptyLine > 2) {
-                    throw new Exception\RuntimeException('Malformed header detected');
-                }
                 continue;
             }
 
-            if ($emptyLine > 1) {
+            // if some data follow by empty lines then indicate malform headers
+            if ($emptyLine > 1 && !$isEmptyLine) {
                 throw new Exception\RuntimeException('Malformed header detected');
+            }
+
+            if (!$isEmptyLine) {
+            	$emptyLine = 0;
             }
 
             // check if a header name is present

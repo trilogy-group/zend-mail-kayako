@@ -87,6 +87,7 @@ abstract class AbstractAddressList implements HeaderInterface
             },
             $values
         );
+
         $addresses = array_filter($addresses);
 
         $header = new static();
@@ -145,11 +146,11 @@ abstract class AbstractAddressList implements HeaderInterface
                     $name = HeaderWrap::mimeEncodeValue($name, $encoding);
                 }
 
-	            if (preg_match('/^(.*)\<(.+)@([^@]+)\>(.*)$/', $value, $matches)) {
+	            if (preg_match('/^(.*)\<(.+)@([^@]+)\>(.*)$/', $email, $matches)) {
 		            $localPart = $matches[2];
 		            $hostname  = $this->idnToAscii($matches[3]);
 		            $email = sprintf('%s@%s', $localPart, $hostname);
-	            } elseif (preg_match('/^(.+)@([^@]+)$/', $value, $matches)) {
+	            } elseif (preg_match('/^(.+)@([^@]+)$/', $email, $matches)) {
 		            $localPart = $matches[1];
 		            $hostname  = $this->idnToAscii($matches[2]);
 		            $email = sprintf('%s@%s', $localPart, $hostname);
