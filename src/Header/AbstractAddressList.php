@@ -67,6 +67,10 @@ abstract class AbstractAddressList implements HeaderInterface
                 $wasEncoded = $wasEncoded || ($decodedValue !== $value);
 
                 $value = trim($decodedValue);
+		if (strtolower($value) === "<undisclosed recipients:>") {
+   		    return null;
+		}
+
 
                 $comments = self::getComments($value);
                 $value = self::stripComments($value);
