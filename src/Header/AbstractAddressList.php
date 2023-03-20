@@ -12,6 +12,7 @@ use TrueBV\Punycode;
 use Zend\Mail\Address;
 use Zend\Mail\AddressList;
 use Zend\Mail\Headers;
+use Zend\Mail\Exception;
 
 /**
  * Base class for headers composing address lists (to, from, cc, bcc, reply-to)
@@ -87,7 +88,12 @@ abstract class AbstractAddressList implements HeaderInterface
                     $value
                 );
 
-                return empty($value) ? null : Address::fromString($value, $comments);
+                try {
+                    return empty($value) ? null : Address::fromString($value, $comments);
+                } catch (Exception\InvalidArgumentException $ex) {
+                    // ignore the invalid email address
+                    return null;
+                }
             },
             $values
         );
